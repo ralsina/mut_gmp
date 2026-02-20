@@ -127,7 +127,7 @@ struct MutGMP::MpF
   end
 
   def set!(value : MpF) : self
-    LibGMP.mpf_set(mpf, value)
+    LibGMP.mpf_set(mpf, value.to_unsafe)
     self
   end
 
@@ -154,7 +154,7 @@ struct MutGMP::MpF
   end
 
   def add!(other : MpF) : self
-    LibGMP.mpf_add(mpf, self, other)
+    LibGMP.mpf_add(mpf, self, other.to_unsafe)
     self
   end
 
@@ -181,7 +181,7 @@ struct MutGMP::MpF
   end
 
   def sub!(other : MpF) : self
-    LibGMP.mpf_sub(mpf, self, other)
+    LibGMP.mpf_sub(mpf, self, other.to_unsafe)
     self
   end
 
@@ -209,7 +209,7 @@ struct MutGMP::MpF
   end
 
   def mul!(other : MpF) : self
-    LibGMP.mpf_mul(mpf, self, other)
+    LibGMP.mpf_mul(mpf, self, other.to_unsafe)
     self
   end
 
@@ -240,7 +240,7 @@ struct MutGMP::MpF
   end
 
   def div!(other : MpF) : self
-    LibGMP.mpf_div(mpf, self, other)
+    LibGMP.mpf_div(mpf, self, other.to_unsafe)
     self
   end
 
@@ -309,7 +309,7 @@ struct MutGMP::MpF
 
   # Comparison
   def <=>(other : MpF)
-    LibGMP.mpf_cmp(mpf, other)
+    LibGMP.mpf_cmp(mpf, other.to_unsafe)
   end
 
   def <=>(other : BigFloat)
@@ -491,11 +491,19 @@ struct Int
   def to_mpf(precision : Int = MutGMP::MpF.default_precision) : MutGMP::MpF
     MutGMP::MpF.new(self, precision)
   end
+
+  def <=>(other : MutGMP::MpF)
+    -(other <=> self)
+  end
 end
 
 struct Float
   def to_mpf(precision : Int = MutGMP::MpF.default_precision) : MutGMP::MpF
     MutGMP::MpF.new(self, precision)
+  end
+
+  def <=>(other : MutGMP::MpF)
+    -(other <=> self)
   end
 end
 
@@ -503,11 +511,19 @@ struct BigInt
   def to_mpf(precision : Int = MutGMP::MpF.default_precision) : MutGMP::MpF
     MutGMP::MpF.new(self)
   end
+
+  def <=>(other : MutGMP::MpF)
+    -(other <=> self)
+  end
 end
 
 struct BigFloat
   def to_mpf : MutGMP::MpF
     MutGMP::MpF.new(self)
+  end
+
+  def <=>(other : MutGMP::MpF)
+    -(other <=> self)
   end
 end
 

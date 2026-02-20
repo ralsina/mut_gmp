@@ -47,7 +47,8 @@ struct MutGMP::MpZ
   # Creates a new `MpZ` from a BigInt
   def initialize(num : BigInt)
     LibGMP.init(out @mpz)
-    LibGMP.set(mpz, num)
+    # Direct copy using the internal mpz pointer
+    LibGMP.set(mpz, num.to_unsafe)
   end
 
   # Creates a new `MpZ` from a Float
@@ -62,7 +63,7 @@ struct MutGMP::MpZ
 
   # Creates a copy of this `MpZ`
   def clone : MpZ
-    MpZ.new { |mpz| LibGMP.set(mpz, self) }
+    MpZ.new { |new_mpz| LibGMP.set(new_mpz, mpz) }
   end
 
   # Sets the value of this `MpZ` to another value (mutates self)
@@ -76,12 +77,12 @@ struct MutGMP::MpZ
   end
 
   def set!(value : BigInt) : self
-    LibGMP.set(mpz, value)
+    LibGMP.set(mpz, value.to_unsafe)
     self
   end
 
   def set!(value : MpZ) : self
-    LibGMP.set(mpz, value)
+    LibGMP.set(mpz, value.to_unsafe)
     self
   end
 
@@ -96,12 +97,12 @@ struct MutGMP::MpZ
   end
 
   def add!(other : BigInt) : self
-    LibGMP.add(mpz, self, other)
+    LibGMP.add(mpz, self, other.to_unsafe)
     self
   end
 
   def add!(other : MpZ) : self
-    LibGMP.add(mpz, self, other)
+    LibGMP.add(mpz, self, other.to_unsafe)
     self
   end
 
@@ -116,12 +117,12 @@ struct MutGMP::MpZ
   end
 
   def sub!(other : BigInt) : self
-    LibGMP.sub(mpz, self, other)
+    LibGMP.sub(mpz, self, other.to_unsafe)
     self
   end
 
   def sub!(other : MpZ) : self
-    LibGMP.sub(mpz, self, other)
+    LibGMP.sub(mpz, self, other.to_unsafe)
     self
   end
 
@@ -140,12 +141,12 @@ struct MutGMP::MpZ
   end
 
   def mul!(other : BigInt) : self
-    LibGMP.mul(mpz, self, other)
+    LibGMP.mul(mpz, self, other.to_unsafe)
     self
   end
 
   def mul!(other : MpZ) : self
-    LibGMP.mul(mpz, self, other)
+    LibGMP.mul(mpz, self, other.to_unsafe)
     self
   end
 
@@ -161,12 +162,12 @@ struct MutGMP::MpZ
 
   def div!(other : BigInt) : self
     check_division_by_zero other
-    LibGMP.fdiv_q(mpz, self, other)
+    LibGMP.fdiv_q(mpz, self, other.to_unsafe)
     self
   end
 
   def div!(other : MpZ) : self
-    LibGMP.fdiv_q(mpz, self, other)
+    LibGMP.fdiv_q(mpz, self, other.to_unsafe)
     self
   end
 
@@ -182,12 +183,12 @@ struct MutGMP::MpZ
 
   def mod!(other : BigInt) : self
     check_division_by_zero other
-    LibGMP.fdiv_r(mpz, self, other)
+    LibGMP.fdiv_r(mpz, self, other.to_unsafe)
     self
   end
 
   def mod!(other : MpZ) : self
-    LibGMP.fdiv_r(mpz, self, other)
+    LibGMP.fdiv_r(mpz, self, other.to_unsafe)
     self
   end
 
@@ -217,34 +218,34 @@ struct MutGMP::MpZ
 
   # Bitwise AND in-place
   def and!(other : BigInt) : self
-    LibGMP.and(mpz, self, other)
+    LibGMP.and(mpz, self, other.to_unsafe)
     self
   end
 
   def and!(other : MpZ) : self
-    LibGMP.and(mpz, self, other)
+    LibGMP.and(mpz, self, other.to_unsafe)
     self
   end
 
   # Bitwise OR in-place
   def or!(other : BigInt) : self
-    LibGMP.ior(mpz, self, other)
+    LibGMP.ior(mpz, self, other.to_unsafe)
     self
   end
 
   def or!(other : MpZ) : self
-    LibGMP.ior(mpz, self, other)
+    LibGMP.ior(mpz, self, other.to_unsafe)
     self
   end
 
   # Bitwise XOR in-place
   def xor!(other : BigInt) : self
-    LibGMP.xor(mpz, self, other)
+    LibGMP.xor(mpz, self, other.to_unsafe)
     self
   end
 
   def xor!(other : MpZ) : self
-    LibGMP.xor(mpz, self, other)
+    LibGMP.xor(mpz, self, other.to_unsafe)
     self
   end
 
@@ -257,18 +258,18 @@ struct MutGMP::MpZ
   # Add-multiply in-place: self += other * multiplier
   def add_mul!(other : BigInt, multiplier : Int::Primitive) : self
     if multiplier >= 0
-      LibGMP.addmul_ui(mpz, other, multiplier.to_u64)
+      LibGMP.addmul_ui(mpz, other.to_unsafe, multiplier.to_u64)
     else
-      LibGMP.addmul(mpz, other, multiplier.to_big_i)
+      LibGMP.addmul(mpz, other.to_unsafe, multiplier.to_big_i.to_unsafe)
     end
     self
   end
 
   def add_mul!(other : MpZ, multiplier : Int::Primitive) : self
     if multiplier >= 0
-      LibGMP.addmul_ui(mpz, other, multiplier.to_u64)
+      LibGMP.addmul_ui(mpz, other.to_unsafe, multiplier.to_u64)
     else
-      LibGMP.addmul(mpz, other, multiplier.to_big_i)
+      LibGMP.addmul(mpz, other.to_unsafe, multiplier.to_big_i.to_unsafe)
     end
     self
   end
@@ -286,29 +287,29 @@ struct MutGMP::MpZ
 
   # GCD in-place
   def gcd!(other : BigInt) : self
-    LibGMP.gcd(mpz, self, other)
+    LibGMP.gcd(mpz, self, other.to_unsafe)
     self
   end
 
   def gcd!(other : MpZ) : self
-    LibGMP.gcd(mpz, self, other)
+    LibGMP.gcd(mpz, self, other.to_unsafe)
     self
   end
 
   # LCM in-place
   def lcm!(other : BigInt) : self
-    LibGMP.lcm(mpz, self, other)
+    LibGMP.lcm(mpz, self, other.to_unsafe)
     self
   end
 
   def lcm!(other : MpZ) : self
-    LibGMP.lcm(mpz, self, other)
+    LibGMP.lcm(mpz, self, other.to_unsafe)
     self
   end
 
   # Integer square root in-place (self = isqrt(self))
   def sqrt! : self
-    if self < 0
+    if LibGMP.cmp_si(mpz, 0) < 0
       raise ArgumentError.new("Square root not defined for negative values")
     end
     LibGMP.sqrt(mpz, self)
@@ -317,11 +318,11 @@ struct MutGMP::MpZ
 
   # Comparison
   def <=>(other : MpZ)
-    LibGMP.cmp(mpz, other)
+    LibGMP.cmp(mpz, other.to_unsafe)
   end
 
   def <=>(other : BigInt)
-    LibGMP.cmp(mpz, other)
+    LibGMP.cmp(mpz, other.to_unsafe)
   end
 
   def <=>(other : Int::Primitive) : Int32
@@ -339,7 +340,7 @@ struct MutGMP::MpZ
   # Bit operations
   def bit(bit : Int) : Int32
     return 0 if bit < 0
-    return self < 0 ? 1 : 0 if bit > LibGMP::BitcntT::MAX
+    return LibGMP.cmp_si(mpz, 0) < 0 ? 1 : 0 if bit > LibGMP::BitcntT::MAX
     LibGMP.tstbit(mpz, LibGMP::BitcntT.new!(bit))
   end
 
@@ -357,7 +358,8 @@ struct MutGMP::MpZ
 
   # Conversions
   def to_big_i : BigInt
-    BigInt.new(to_s)
+    # Efficient direct conversion using GMP's internal representation
+    BigInt.new { |b_mpz| LibGMP.set(b_mpz, mpz) }
   end
 
   def to_i : Int32
@@ -508,11 +510,19 @@ struct Int
   def to_mpz : MutGMP::MpZ
     MutGMP::MpZ.new(self)
   end
+
+  def <=>(other : MutGMP::MpZ)
+    -(other <=> self)
+  end
 end
 
 struct BigInt
   def to_mpz : MutGMP::MpZ
     MutGMP::MpZ.new(self)
+  end
+
+  def <=>(other : MutGMP::MpZ)
+    -(other <=> self)
   end
 end
 

@@ -93,7 +93,7 @@ struct MutGMP::MpQ
   end
 
   def set!(value : MpQ) : self
-    LibGMP.set(mpq, value)
+    LibGMP.set(mpq, value.to_unsafe)
     self
   end
 
@@ -140,7 +140,7 @@ struct MutGMP::MpQ
   end
 
   def add!(other : MpQ) : self
-    LibGMP.mpq_add(mpq, self, other)
+    LibGMP.mpq_add(mpq, self, other.to_unsafe)
     self
   end
 
@@ -164,7 +164,7 @@ struct MutGMP::MpQ
   end
 
   def sub!(other : MpQ) : self
-    LibGMP.mpq_sub(mpq, self, other)
+    LibGMP.mpq_sub(mpq, self, other.to_unsafe)
     self
   end
 
@@ -188,7 +188,7 @@ struct MutGMP::MpQ
   end
 
   def mul!(other : MpQ) : self
-    LibGMP.mpq_mul(mpq, self, other)
+    LibGMP.mpq_mul(mpq, self, other.to_unsafe)
     self
   end
 
@@ -215,7 +215,7 @@ struct MutGMP::MpQ
   end
 
   def div!(other : MpQ) : self
-    LibGMP.mpq_div(mpq, self, other)
+    LibGMP.mpq_div(mpq, self, other.to_unsafe)
     self
   end
 
@@ -251,7 +251,7 @@ struct MutGMP::MpQ
 
   # Comparison
   def <=>(other : MpQ)
-    LibGMP.mpq_cmp(mpq, other)
+    LibGMP.mpq_cmp(mpq, other.to_unsafe)
   end
 
   def <=>(other : BigRational)
@@ -259,7 +259,7 @@ struct MutGMP::MpQ
   end
 
   def <=>(other : BigInt) : Int32
-    LibGMP.mpq_cmp_z(mpq, other)
+    LibGMP.mpq_cmp_z(mpq, other.to_unsafe)
   end
 
   def <=>(other : Int::Primitive) : Int32
@@ -368,16 +368,28 @@ struct Int
   def to_mpq(denominator : Int = 1) : MutGMP::MpQ
     MutGMP::MpQ.new(self, denominator)
   end
+
+  def <=>(other : MutGMP::MpQ)
+    -(other <=> self)
+  end
 end
 
 struct BigInt
   def to_mpq(denominator : Int = 1) : MutGMP::MpQ
     MutGMP::MpQ.new(self)
   end
+
+  def <=>(other : MutGMP::MpQ)
+    -(other <=> self)
+  end
 end
 
 struct BigRational
   def to_mpq : MutGMP::MpQ
     MutGMP::MpQ.new(self)
+  end
+
+  def <=>(other : MutGMP::MpQ)
+    -(other <=> self)
   end
 end
