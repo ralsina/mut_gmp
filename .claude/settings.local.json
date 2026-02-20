@@ -13,7 +13,10 @@
       "Bash(git rm:*)",
       "Bash(gh repo view:*)",
       "Bash(crystal eval:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== Running $f ===\")",
+      "Bash(done)"
     ]
   }
 }

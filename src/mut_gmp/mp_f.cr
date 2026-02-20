@@ -141,15 +141,21 @@ struct MutGMP::MpF
     self
   end
 
+  def add!(other : Float::Primitive) : self
+    temp = MpF.new(other)
+    LibGMP.mpf_add(mpf, self, temp.to_unsafe)
+    self
+  end
+
   def add!(other : BigInt) : self
     temp = MpF.new(other)
-    LibGMP.mpf_add(mpf, self, temp)
+    LibGMP.mpf_add(mpf, self, temp.to_unsafe)
     self
   end
 
   def add!(other : BigFloat) : self
     temp = MpF.new(other)
-    LibGMP.mpf_add(mpf, self, temp)
+    LibGMP.mpf_add(mpf, self, temp.to_unsafe)
     self
   end
 
@@ -168,15 +174,21 @@ struct MutGMP::MpF
     self
   end
 
+  def sub!(other : Float::Primitive) : self
+    temp = MpF.new(other)
+    LibGMP.mpf_sub(mpf, self, temp.to_unsafe)
+    self
+  end
+
   def sub!(other : BigInt) : self
     temp = MpF.new(other)
-    LibGMP.mpf_sub(mpf, self, temp)
+    LibGMP.mpf_sub(mpf, self, temp.to_unsafe)
     self
   end
 
   def sub!(other : BigFloat) : self
     temp = MpF.new(other)
-    LibGMP.mpf_sub(mpf, self, temp)
+    LibGMP.mpf_sub(mpf, self, temp.to_unsafe)
     self
   end
 
@@ -196,15 +208,21 @@ struct MutGMP::MpF
     self
   end
 
+  def mul!(other : Float::Primitive) : self
+    temp = MpF.new(other)
+    LibGMP.mpf_mul(mpf, self, temp.to_unsafe)
+    self
+  end
+
   def mul!(other : BigInt) : self
     temp = MpF.new(other)
-    LibGMP.mpf_mul(mpf, self, temp)
+    LibGMP.mpf_mul(mpf, self, temp.to_unsafe)
     self
   end
 
   def mul!(other : BigFloat) : self
     temp = MpF.new(other)
-    LibGMP.mpf_mul(mpf, self, temp)
+    LibGMP.mpf_mul(mpf, self, temp.to_unsafe)
     self
   end
 
@@ -225,17 +243,24 @@ struct MutGMP::MpF
     self
   end
 
+  def div!(other : Float::Primitive) : self
+    raise DivisionByZeroError.new if other == 0
+    temp = MpF.new(other)
+    LibGMP.mpf_div(mpf, self, temp.to_unsafe)
+    self
+  end
+
   def div!(other : BigInt) : self
     raise DivisionByZeroError.new if other == 0
     temp = MpF.new(other)
-    LibGMP.mpf_div(mpf, self, temp)
+    LibGMP.mpf_div(mpf, self, temp.to_unsafe)
     self
   end
 
   def div!(other : BigFloat) : self
     raise DivisionByZeroError.new if other == 0
     temp = MpF.new(other)
-    LibGMP.mpf_div(mpf, self, temp)
+    LibGMP.mpf_div(mpf, self, temp.to_unsafe)
     self
   end
 
