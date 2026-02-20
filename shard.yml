@@ -1,0 +1,18 @@
+name: mut_gmp
+version: 0.1.0
+
+authors:
+  - ralsina <ralsina@kth.se>
+
+crystal: 1.10
+
+targets:
+  mut_gmp:
+    main: src/mut_gmp.cr
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 1.5
+
+license: MIT
