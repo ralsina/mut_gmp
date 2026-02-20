@@ -88,12 +88,22 @@ struct MutGMP::MpQ
   end
 
   def set!(value : BigRational) : self
-    LibGMP.set(mpq, value)
+    # Copy numerator and denominator separately
+    num = MpZ.new { |mpz| LibGMP.mpq_get_num(mpz, value.to_unsafe) }
+    den = MpZ.new { |mpz| LibGMP.mpq_get_den(mpz, value.to_unsafe) }
+    LibGMP.mpq_set_num(mpq, num.to_unsafe)
+    LibGMP.mpq_set_den(mpq, den.to_unsafe)
+    LibGMP.mpq_canonicalize(mpq)
     self
   end
 
   def set!(value : MpQ) : self
-    LibGMP.set(mpq, value.to_unsafe)
+    # Copy numerator and denominator separately
+    num = MpZ.new { |mpz| LibGMP.mpq_get_num(mpz, value.to_unsafe) }
+    den = MpZ.new { |mpz| LibGMP.mpq_get_den(mpq, value.to_unsafe) }
+    LibGMP.mpq_set_num(mpq, num.to_unsafe)
+    LibGMP.mpq_set_den(mpq, den.to_unsafe)
+    LibGMP.mpq_canonicalize(mpq)
     self
   end
 
@@ -282,11 +292,14 @@ struct MutGMP::MpQ
 
   # Conversions
   def to_big_r : BigRational
-    BigRational.new { |b_mpq| LibGMP.set(b_mpq, self) }
+    # Copy numerator and denominator separately
+    num = MpZ.new { |mpz| LibGMP.mpq_get_num(mpz, self) }
+    den = MpZ.new { |mpz| LibGMP.mpq_get_den(mpz, self) }
+    BigRational.new(num.to_big_i, den.to_big_i)
   end
 
   def to_big_i : BigInt
-    BigInt.new { |_| LibGMP.set(mpq, self) }
+    BigInt.new { |b_mpz| LibGMP.mpq_get_num(b_mpz, self) }
   end
 
   def to_f : Float64
@@ -356,11 +369,6 @@ struct MutGMP::MpQ
   def self.two : MpQ
     new(2, 1)
   end
-end
-
-# LibGMP bindings for MPQ operations
-lib LibGMP
-  fun set = __gmpq_set(rop : MPQ*, op : MPQ*)
 end
 
 # Extending standard types for convenience
